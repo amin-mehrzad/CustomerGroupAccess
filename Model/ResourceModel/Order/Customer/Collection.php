@@ -10,7 +10,7 @@ class Collection extends \Magento\Sales\Model\ResourceModel\Order\Customer\Colle
     {
         parent::_initSelect();
         $this->addAttributeToSelect(
-           ['email'=>'1']
+            'email'
         );
         return $this;
     }
