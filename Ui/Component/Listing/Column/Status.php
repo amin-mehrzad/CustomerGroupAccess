@@ -39,9 +39,9 @@ class Status extends Column
 
                 $order = $this->_orderRepository->get($item["entity_id"]);
                 // $status = $order->getData("sales_repesentative");
-
-                $dealer = $order->getSalesRepresentative();
-
+                $dealer = $order->getSalesRepresentative(); 
+      //          if(isset($dealer)){
+                                   
                 // switch ($status) {
                 //     case "0":
                 //         $export_status = "No";
@@ -57,15 +57,18 @@ class Status extends Column
 
                 // $this->getData('name') returns the name of the column so in this case it would return export_status
                 //$item[$this->getData('name')] = $export_status;
-                $item[$this->getData('name')] = $dealer;
-
-                // if ($columnName == "sales_repesentative" && $dealer) {
-                //     $sql = "UPDATE " . $this->tableSalesOrderGrid . " SET sales_repesentative = :VALUE WHERE entity_id = " . $item["entity_id"];
-                //     $binds = [
-                //         "VALUE" => $dealer,
-                //     ];
-                //     $connection->query($sql, $binds);
-                // }
+                    $item[$this->getData('name')] = $dealer;
+            //    } 
+         //       else {
+          //          $item[$this->getData('name')] = "-";
+          //      }
+                //  if ($columnName == "sales_representative") {
+                //      $sql = "UPDATE " . $this->tableSalesOrderGrid . " SET sales_representative = :VALUE WHERE entity_id = " . $item["entity_id"];
+                //      $binds = [
+                //          "VALUE" => $dealer,
+                //      ];
+                //      $connection->query($sql, $binds);
+                //  }
 
             }
         }

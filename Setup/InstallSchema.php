@@ -21,11 +21,23 @@ class InstallSchema implements InstallSchemaInterface
 
         //$quote = 'quote';
         $orderTable = 'sales_order';
+        $orderGridTable = 'sales_order_grid';
 
         //Order Grid table
         $setup->getConnection()
             ->addColumn(
                 $setup->getTable($orderTable),
+                'sales_representative',
+                [
+                    'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                    'length' => 255,
+                    'comment' =>'Sales Representative Name'
+                ]
+            );
+
+            $setup->getConnection()
+            ->addColumn(
+                $setup->getTable($orderGridTable),
                 'sales_representative',
                 [
                     'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
