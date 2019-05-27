@@ -67,7 +67,11 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
      * @var SearchCriteria
      */
     protected $searchCriteria;
-    protected $seller_order_arr;
+    // protected $seller_order_arr;
+
+    protected $authSession;
+    //  \Magento\Framework\View\Element\Template\Context $context,
+
     /**
      * @param string $name
      * @param string $primaryFieldName
@@ -87,9 +91,14 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
         SearchCriteriaBuilder $searchCriteriaBuilder,
         RequestInterface $request,
         FilterBuilder $filterBuilder,
-        array $meta = [],
-        array $data = []
+        // array $meta = [],
+        array $data = [],
+        \Magento\Framework\View\Element\Context $context,
+
+        \Magento\Backend\Model\Auth\Session $authSession
     ) {
+        $this->authSession = $authSession;
+
         $this->request = $request;
         $this->filterBuilder = $filterBuilder;
         $this->name = $name;
@@ -97,9 +106,10 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
         $this->requestFieldName = $requestFieldName;
         $this->reporting = $reporting;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->meta = $meta;
+        // $this->meta = $meta;
         $this->data = $data;
         $this->prepareUpdateUrl();
+
     }
     protected function searchResultToOutput(SearchResultInterface $searchResult)
     {
@@ -115,22 +125,55 @@ class DataProvider extends \Magento\Framework\View\Element\UiComponent\DataProvi
             $arrItems['totalRecords'] = $searchResult->getTotalCount();
         }
 
+        //   $getCustomeId = [];
+        //   foreach ($arrItems['items'] as $getcustomer_id) {
+        //       $getCustomeId[] = $getcustomer_id['sales_representative'];
+        //   }
 
+        $user = $this->getCurrentUser();
 
+        $currentUserData = $this->getCurrentUser()->getRole()->getData();
+        $currentUserRoleName = $currentUserData['role_name'];
+       //print_r('----------------------------------------------------' . sizeof($itemData));
 
-        // $getCustomeId = [];
-        // foreach ($arrItems['items'] as $getcustomer_id) {
-        //     $getCustomeId[] = $getcustomer_id['customer_id'];
-        // }
-      ////////////////////////////////////////////////////////////////  var_dump($arrItems);
+        // $currentUser='amin';
+       // if ($currentUserRoleName != 'Administrators') {
+            $currentUser = $this->getCurrentUser()->getUsername();
+            $seller_order_arr = [];
+$a=0;
+            foreach ($arrItems['items'] as $row) {
+                
+                if ($row['sales_representative'] != null) {
+                   $a++;
+                    if (in_array($currentUser, explode(",", $row['sales_representative']))) {
+                        $seller_order_arr[] = $row;
+                    }
+                }
+            }
+            $arrItems['items'] = $seller_order_arr;
+            $arrItems['totalRecords']=$a;
+
+       // }
+
+        //  var_dump($seller_order_arr);
         // die('die');
 
+//          $user = $this->getCurrentUser();
+          // echo '--------------------------------------'. $a;
+        //          if ($user->getUsername() == "amin") {
+        //              // echo $user;
+        //             // print_r($user->getUsername());
 
-
-
+//          }
 
         return $arrItems;
     }
+
+    public function getCurrentUser()
+    {
+        return $this->authSession->getUser();
+    }
+
     public function getSearchCriteria()
     {
         if (!$this->searchCriteria) {
